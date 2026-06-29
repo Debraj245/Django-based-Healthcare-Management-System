@@ -158,46 +158,6 @@ Built as a portfolio project targeting campus placements, it demonstrates full-s
 ## 📁 Project Structure
 
 ```
-healthcare/
-├── core/
-│   ├── models.py            # Hospital, Department, Doctor, Patient,
-│   │                        # Bed, Slot, Appointment, Bloodbank
-│   ├── views.py             # All web views (12 views)
-│   ├── api_views.py         # DRF API views
-│   ├── serializers.py       # DRF serializers
-│   ├── urls.py              # Web URL routes
-│   ├── api_urls.py          # API URL routes
-│   ├── forms.py             # RegisterForm, AppointmentForm,
-│   │                        # BloodSearchForm, BedSearchForm
-│   ├── admin.py             # Django admin config
-│   └── templates/core/
-│       ├── base.html                  # Navbar, footer, messages
-│       ├── home.html                  # Landing page with stats
-│       ├── hospitals.html             # Hospital list + search
-│       ├── hospital_detail.html       # Beds, blood, doctors per hospital
-│       ├── bed_availability.html      # Filter + available beds
-│       ├── blood_search.html          # Blood group search
-│       ├── book_appointment.html      # OPD booking form
-│       ├── my_appointments.html       # Patient appointment history
-│       ├── dashboard.html             # Staff dashboard
-│       ├── manage_appointments.html   # Confirm/Cancel/Complete
-│       ├── login.html                 # Login page
-│       └── register.html             # Registration page
-├── healthcare/
-│   ├── settings.py          # Production-ready settings
-│   ├── urls.py              # Root URL config
-│   └── wsgi.py
-├── static/
-│   └── styles/
-│       ├── style.css        # Core styles (navbar, hero, cards)
-│       └── extra.css        # Component styles (tables, forms, badges)
-├── seed_data.py             # Demo data seeder
-├── requirements.txt
-├── Procfile                 # For Railway/Render deployment
-└── runtime.txt
-```
-
----
 
 ## ⚙️ Installation
 
