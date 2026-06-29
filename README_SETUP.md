@@ -9,10 +9,7 @@ pip install django pillow
 # 2. Apply migrations
 python manage.py migrate
 
-# 3. Seed demo data (hospitals, doctors, blood bank, beds, users)
-python seed_data.py
-
-# 4. Run the server
+# 3. Run the server
 python manage.py runserver
 ```
 
