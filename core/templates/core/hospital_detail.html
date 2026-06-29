@@ -1,0 +1,101 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ hospital.name }} - MediCare{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{% url 'hospitals' %}" class="back-link">← Back to Hospitals</a>
+    <h1>🏥 {{ hospital.name }}</h1>
+    {% if hospital.address %}<p class="subtitle">📍 {{ hospital.address }}</p>{% endif %}
+    {% if hospital.phone %}<p class="subtitle">📞 {{ hospital.phone }}</p>{% endif %}
+</div>
+
+<div class="stats-strip">
+    <div class="stat-item">
+        <span class="stat-number">{{ departments.count }}</span>
+        <span class="stat-label">Departments</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-number">{{ doctors.count }}</span>
+        <span class="stat-label">Doctors</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-number">
+            {% for b in beds_by_dept %}{{ b.available }}{% if not forloop.last %}+{% endif %}{% endfor %}
+        </span>
+        <span class="stat-label">Beds Available</span>
+    </div>
+</div>
+
+<section class="section">
+    <h2 class="section-title">🛏️ Bed Availability by Department</h2>
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Department</th>
+                    <th>Total Beds</th>
+                    <th>Available</th>
+                    <th>Occupied</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in beds_by_dept %}
+                <tr>
+                    <td>{{ item.dept.get_name_display }}</td>
+                    <td>{{ item.total }}</td>
+                    <td><span class="badge badge-green">{{ item.available }}</span></td>
+                    <td><span class="badge badge-red">{{ item.total|subtract:item.available }}</span></td>
+                    <td>
+                        {% if item.available > 0 %}
+                            <span class="status-dot green"></span> Available
+                        {% else %}
+                            <span class="status-dot red"></span> Full
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5">No departments added yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="section">
+    <h2 class="section-title">🩸 Blood Bank</h2>
+    {% if bloodbank %}
+    <div class="blood-grid">
+        {% for entry in bloodbank %}
+        <div class="blood-card {% if entry.units_available > 0 %}blood-available{% else %}blood-empty{% endif %}">
+            <div class="blood-type">{{ entry.bld_grps }}</div>
+            <div class="blood-units">{{ entry.units_available }} units</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-msg">No blood bank data available for this hospital.</p>
+    {% endif %}
+</section>
+
+<section class="section">
+    <h2 class="section-title">🩺 Our Doctors</h2>
+    <div class="cards-grid">
+        {% for doc in doctors %}
+        <div class="card doctor-card">
+            <div class="doctor-avatar">👨‍⚕️</div>
+            <div class="card-body">
+                <h3>{{ doc }}</h3>
+                <p class="dept-tag">{{ doc.department.get_name_display }}</p>
+                {% if doc.qualification %}<p>🎓 {{ doc.qualification }}</p>{% endif %}
+                {% if doc.experience_years %}<p>⏳ {{ doc.experience_years }} yrs experience</p>{% endif %}
+                <p>⏰ OPD Duration: {{ doc.opd_duration }} min</p>
+                <a href="{% url 'book_appointment' %}?doctor={{ doc.pk }}" class="btn btn-primary">Book Appointment</a>
+            </div>
+        </div>
+        {% empty %}
+        <p class="empty-msg">No doctors listed yet.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

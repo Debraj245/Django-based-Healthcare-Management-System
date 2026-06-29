@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MediCare{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/extra.css' %}">
+</head>
+<body>
+    <div class="heading">
+        <div class="nav">
+            <a href="{% url 'home' %}" style="text-decoration:none;color:white;"><h1>MediCare</h1></a>
+            <a href="{% if user.is_authenticated %}{% url 'logout' %}{% else %}{% url 'login' %}{% endif %}">
+                <img class="logoImg" src="{% static 'assets/login.svg' %}" alt="login" title="{% if user.is_authenticated %}Logout{% else %}Login{% endif %}">
+            </a>
+        </div>
+        <nav>
+            <ul id="sidemenu">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'hospitals' %}">Hospitals</a></li>
+                <li><a href="{% url 'book_appointment' %}">OPD Appointment</a></li>
+                <li><a href="{% url 'blood_search' %}">Find Blood</a></li>
+                <li><a href="{% url 'bed_availability' %}">Bed Availability</a></li>
+                {% if user.is_authenticated %}
+                    {% if user.is_staff %}
+                    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    {% else %}
+                    <li><a href="{% url 'my_appointments' %}">My Appointments</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'logout' %}">Logout ({{ user.first_name|default:user.username }})</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'register' %}">Register</a></li>
+                {% endif %}
+                <img id="crossimg" src="{% static 'assets/cross.svg' %}" alt="">
+            </ul>
+            <img id="menuimg" src="{% static 'assets/menu.svg' %}" alt="">
+        </nav>
+    </div>
+
+    {% if messages %}
+    <div class="messages-container">
+        {% for msg in messages %}
+        <div class="alert alert-{{ msg.tags }}">{{ msg }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <footer>
+        <div class="foot">
+            <div class="footer-elements">
+                <h3>About MediCare</h3>
+                <a href="{% url 'home' %}">Our Mission</a>
+                <a href="{% url 'hospitals' %}">For Hospitals</a>
+                <a href="{% url 'register' %}">For Patients</a>
+            </div>
+            <div class="footer-elements">
+                <h3>Services</h3>
+                <a href="{% url 'bed_availability' %}">Bed Availability</a>
+                <a href="{% url 'book_appointment' %}">OPD Appointment</a>
+                <a href="{% url 'blood_search' %}">Blood Availability</a>
+                <a href="{% url 'hospitals' %}">Find Hospitals</a>
+            </div>
+            <div class="footer-elements">
+                <h3>Support</h3>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">FAQs</a>
+            </div>
+            <div class="footer-elements">
+                <h3>Legal</h3>
+                <a href="#">Terms of Service</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Data Protection</a>
+            </div>
+            <div class="footer-line"></div>
+        </div>
+        <div class="rights">
+            <p>© 2025 MediCare. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'assets/home.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

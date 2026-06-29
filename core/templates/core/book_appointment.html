@@ -1,0 +1,77 @@
+{% extends 'core/base.html' %}
+{% block title %}Book Appointment - MediCare{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🩺 Book OPD Appointment</h1>
+    <p class="subtitle">Select a doctor and your preferred time slot.</p>
+</div>
+
+<div class="form-card">
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label>Select Doctor</label>
+            <select name="doctor" id="doctorSelect" required class="form-control">
+                <option value="">-- Choose a Doctor --</option>
+                {% for doc in doctors %}
+                <option value="{{ doc.pk }}" {% if request.GET.doctor == doc.pk|stringformat:"s" %}selected{% endif %}>
+                    {{ doc }} | {{ doc.department.get_name_display }} | {{ doc.hospital.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Appointment Date & Time</label>
+            <input type="datetime-local" name="slot" required class="form-control"
+                   min="{% now 'Y-m-d' %}T08:00">
+        </div>
+
+        <div class="form-group">
+            <label>Notes (optional)</label>
+            <textarea name="notes" class="form-control" rows="3"
+                      placeholder="Any symptoms or notes for the doctor..."></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">✅ Confirm Appointment</button>
+            <a href="{% url 'home' %}" class="btn btn-outline">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<div id="doctorInfoPanel" class="info-box" style="display:none; margin-top:20px;">
+    <p id="doctorInfoText"></p>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const doctorData = {
+    {% for doc in doctors %}
+    "{{ doc.pk }}": {
+        name: "{{ doc }}",
+        dept: "{{ doc.department.get_name_display }}",
+        hospital: "{{ doc.hospital.name }}",
+        duration: "{{ doc.opd_duration }}",
+        qual: "{{ doc.qualification|default:'' }}",
+    },
+    {% endfor %}
+};
+
+document.getElementById('doctorSelect').addEventListener('change', function() {
+    const panel = document.getElementById('doctorInfoPanel');
+    const text = document.getElementById('doctorInfoText');
+    const d = doctorData[this.value];
+    if (d) {
+        text.innerHTML = `<strong>${d.name}</strong> &mdash; ${d.dept} at ${d.hospital}${d.qual ? ' | ' + d.qual : ''} | OPD: ${d.duration} min`;
+        panel.style.display = 'block';
+    } else {
+        panel.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}MediCare - Your Health, Our Priority{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+<div style="background: linear-gradient(135deg, #007bff, #26a69a); color: white; text-align:center; padding: 12px; font-size: 1rem;">
+    {% if user.is_staff %}
+        👑 Welcome back, Admin <strong>{{ user.first_name|default:user.username }}</strong>! &nbsp;
+        <a href="{% url 'dashboard' %}" style="color:white; font-weight:700; text-decoration:underline;">Go to Dashboard →</a>
+    {% elif is_doctor %}
+        👨‍⚕️ Welcome, Dr. <strong>{{ user.first_name|default:user.username }}</strong>! &nbsp;
+        <a href="{% url 'my_appointments' %}" style="color:white; font-weight:700; text-decoration:underline;">View Appointments →</a>
+    {% elif is_patient %}
+        👤 Welcome back, <strong>{{ user.first_name|default:user.username }}</strong>! &nbsp;
+        <a href="{% url 'my_appointments' %}" style="color:white; font-weight:700; text-decoration:underline;">My Appointments →</a>
+    {% endif %}
+</div>
+{% endif %}
+
+<div class="search-Hospital">
+    <h3>All Hospitals. One Platform.</h3>
+    <p>We provide quality healthcare services — emergency care, specialist appointments, real-time bed availability, OPD booking, and blood availability services.</p>
+
+    <form action="{% url 'hospitals' %}" method="GET"
+          style="display:flex; align-items:center; background:white; border-radius:50px;
+                 padding:6px 6px 6px 20px; width:100%; max-width:480px; margin:20px auto;
+                 box-shadow:0 4px 20px rgba(0,0,0,0.15); border:2px solid transparent;
+                 box-sizing:border-box;">
+        <input type="text" name="q" placeholder="Search Hospitals by name..."
+               style="flex:1; min-width:0; border:none; outline:none; font-size:15px;
+                      background:transparent; color:#333; padding:8px 10px 8px 0;">
+        <button type="submit"
+                style="background:#007bff; border:none; cursor:pointer; width:42px; height:42px;
+                       border-radius:50%; display:flex; align-items:center; justify-content:center;
+                       flex-shrink:0; transition:background 0.2s;">
+            <img src="{% static 'assets/search.svg' %}" alt="search"
+                 style="width:18px; height:18px; filter:invert(1);">
+        </button>
+    </form>
+</div>
+
+<div class="stats-strip">
+    <div class="stat-item">
+        <span class="stat-number">{{ total_hospitals }}</span>
+        <span class="stat-label">Hospitals</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-number">{{ available_beds }}</span>
+        <span class="stat-label">Beds Available</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-number">{{ total_doctors }}</span>
+        <span class="stat-label">Doctors</span>
+    </div>
+</div>
+
+<div class="service-tag"><h1>Our Services</h1></div>
+
+<div class="container">
+    <a href="{% url 'bed_availability' %}">
+        <div class="services">
+            <div class="service-img">🛏️</div>
+            <h2>Bed Availability</h2>
+            <p>Find available beds and book across all hospitals in real-time.</p>
+        </div>
+    </a>
+    <a href="{% url 'book_appointment' %}">
+        <div class="services">
+            <div class="service-img">🩺</div>
+            <h2>OPD Appointment</h2>
+            <p>Book appointments with specialists across multiple hospitals.</p>
+        </div>
+    </a>
+    <a href="{% url 'blood_search' %}">
+        <div class="services">
+            <div class="service-img">🩸</div>
+            <h2>Blood Availability</h2>
+            <p>Find available blood stock across all hospitals with real-time updates.</p>
+        </div>
+    </a>
+    <a href="{% url 'hospitals' %}">
+        <div class="services">
+            <div class="service-img">🏥</div>
+            <h2>Find Hospitals</h2>
+            <p>Browse hospitals, departments, doctors, and bed status near you.</p>
+        </div>
+    </a>
+</div>
+{% endblock %}

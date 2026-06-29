@@ -1,0 +1,43 @@
+{% extends 'core/base.html' %}
+{% block title %}My Appointments - MediCare{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>📋 My Appointments</h1>
+    <a href="{% url 'book_appointment' %}" class="btn btn-primary" style="float:right;">+ New Appointment</a>
+</div>
+
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr><th>#</th><th>Doctor</th><th>Hospital</th><th>Department</th><th>Date & Time</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+            {% for appt in appointments %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ appt.doctor }}</td>
+                <td>{{ appt.doctor.department.hospital.name }}</td>
+                <td>{{ appt.doctor.department.get_name_display }}</td>
+                <td>{{ appt.slot|date:"d M Y, H:i" }}</td>
+                <td>
+                    <span class="badge
+                        {% if appt.status == 'CONFIRMED' %}badge-green
+                        {% elif appt.status == 'CANCELLED' %}badge-red
+                        {% elif appt.status == 'COMPLETED' %}badge-grey
+                        {% else %}badge-blue{% endif %}">
+                        {{ appt.get_status_display }}
+                    </span>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align:center; padding:30px;">
+                    You have no appointments yet. <a href="{% url 'book_appointment' %}">Book one now →</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

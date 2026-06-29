@@ -1,0 +1,105 @@
+{% extends 'core/base.html' %}
+{% block title %}Admin Dashboard - MediCare{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>📊 Admin Dashboard</h1>
+    <p class="subtitle">Hospital management overview</p>
+</div>
+
+<div class="dashboard-grid">
+    <div class="dash-card dash-blue">
+        <div class="dash-icon">🏥</div>
+        <div class="dash-info">
+            <span class="dash-number">{{ total_hospitals }}</span>
+            <span class="dash-label">Hospitals</span>
+        </div>
+    </div>
+    <div class="dash-card dash-green">
+        <div class="dash-icon">👥</div>
+        <div class="dash-info">
+            <span class="dash-number">{{ total_patients }}</span>
+            <span class="dash-label">Patients</span>
+        </div>
+    </div>
+    <div class="dash-card dash-teal">
+        <div class="dash-icon">🩺</div>
+        <div class="dash-info">
+            <span class="dash-number">{{ total_doctors }}</span>
+            <span class="dash-label">Doctors</span>
+        </div>
+    </div>
+    <div class="dash-card dash-orange">
+        <div class="dash-icon">🛏️</div>
+        <div class="dash-info">
+            <span class="dash-number">{{ available_beds }}/{{ total_beds }}</span>
+            <span class="dash-label">Beds Available</span>
+        </div>
+    </div>
+    <div class="dash-card dash-red">
+        <div class="dash-icon">📋</div>
+        <div class="dash-info">
+            <span class="dash-number">{{ pending_appointments }}</span>
+            <span class="dash-label">Pending Appointments</span>
+        </div>
+    </div>
+</div>
+
+<section class="section">
+    <h2 class="section-title">🩸 Blood Bank Summary</h2>
+    <div class="blood-grid">
+        {% for entry in blood_summary %}
+        <div class="blood-card {% if entry.total_units > 0 %}blood-available{% else %}blood-empty{% endif %}">
+            <div class="blood-type">{{ entry.bld_grps }}</div>
+            <div class="blood-units">{{ entry.total_units }} units</div>
+        </div>
+        {% empty %}
+        <p class="empty-msg">No blood bank data found.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 class="section-title">📋 Recent Appointments</h2>
+        <a href="{% url 'manage_appointments' %}" class="btn btn-outline">Manage All</a>
+    </div>
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr><th>Patient</th><th>Doctor</th><th>Date & Time</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                {% for appt in recent_appointments %}
+                <tr>
+                    <td>{{ appt.patient }}</td>
+                    <td>{{ appt.doctor }}</td>
+                    <td>{{ appt.slot|date:"d M Y, H:i" }}</td>
+                    <td>
+                        <span class="badge
+                            {% if appt.status == 'CONFIRMED' %}badge-green
+                            {% elif appt.status == 'CANCELLED' %}badge-red
+                            {% elif appt.status == 'COMPLETED' %}badge-grey
+                            {% else %}badge-blue{% endif %}">
+                            {{ appt.get_status_display }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4">No appointments yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="section">
+    <h2 class="section-title">⚡ Quick Actions</h2>
+    <div class="quick-links">
+        <a href="/admin/" class="btn btn-primary">Django Admin Panel</a>
+        <a href="{% url 'manage_appointments' %}" class="btn btn-outline">Manage Appointments</a>
+        <a href="{% url 'hospitals' %}" class="btn btn-outline">View Hospitals</a>
+        <a href="{% url 'bed_availability' %}" class="btn btn-outline">Bed Availability</a>
+    </div>
+</section>
+{% endblock %}

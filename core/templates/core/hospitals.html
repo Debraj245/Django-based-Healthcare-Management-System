@@ -1,0 +1,41 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Hospitals - MediCare{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🏥 Find Hospitals</h1>
+    <form action="{% url 'hospitals' %}" method="GET" class="search-bar inline-search">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search hospitals...">
+        <button type="submit"><img src="{% static 'assets/search.svg' %}" alt="search"></button>
+    </form>
+    {% if query %}<p class="result-info">Results for: <strong>"{{ query }}"</strong></p>{% endif %}
+</div>
+
+<div class="cards-grid">
+    {% for item in hospitals_data %}
+    <div class="card hospital-card">
+        {% if item.obj.display %}
+            <img src="{{ item.obj.display.url }}" alt="{{ item.obj.name }}" class="card-img">
+        {% else %}
+            <div class="card-img-placeholder">🏥</div>
+        {% endif %}
+        <div class="card-body">
+            <h2>{{ item.obj.name }}</h2>
+            {% if item.obj.address %}<p class="card-address">📍 {{ item.obj.address }}</p>{% endif %}
+            {% if item.obj.phone %}<p class="card-phone">📞 {{ item.obj.phone }}</p>{% endif %}
+            <div class="bed-badge-row">
+                <span class="badge badge-green">✅ {{ item.available_beds }} Available</span>
+                <span class="badge badge-grey">🛏 {{ item.total_beds }} Total Beds</span>
+            </div>
+            <a href="{% url 'hospital_detail' item.obj.pk %}" class="btn btn-primary">View Details →</a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <p>😔 No hospitals found{% if query %} for "{{ query }}"{% endif %}.</p>
+        <a href="{% url 'hospitals' %}" class="btn btn-outline">Clear search</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

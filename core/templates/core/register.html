@@ -1,0 +1,27 @@
+{% extends 'core/base.html' %}
+{% block title %}Register - MediCare{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h2>📝 Create Account</h2>
+        <p class="auth-sub">Join MediCare to manage your health appointments</p>
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    {% for err in field.errors %}
+                    <span class="field-error">{{ err }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+        </form>
+        <p class="auth-footer">Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+    </div>
+</div>
+{% endblock %}

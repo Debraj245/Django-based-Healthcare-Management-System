@@ -1,0 +1,58 @@
+{% extends 'core/base.html' %}
+{% block title %}Manage Appointments - MediCare{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>⚙️ Manage Appointments</h1>
+    <a href="{% url 'dashboard' %}" class="btn btn-outline">← Dashboard</a>
+</div>
+
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr><th>#</th><th>Patient</th><th>Doctor</th><th>Hospital</th><th>Date & Time</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+            {% for appt in appointments %}
+            <tr>
+                <td>{{ appt.pk }}</td>
+                <td>{{ appt.patient }}</td>
+                <td>{{ appt.doctor }}</td>
+                <td>{{ appt.doctor.department.hospital.name }}</td>
+                <td>{{ appt.slot|date:"d M Y, H:i" }}</td>
+                <td>
+                    <span class="badge
+                        {% if appt.status == 'CONFIRMED' %}badge-green
+                        {% elif appt.status == 'CANCELLED' %}badge-red
+                        {% elif appt.status == 'COMPLETED' %}badge-grey
+                        {% else %}badge-blue{% endif %}">
+                        {{ appt.get_status_display }}
+                    </span>
+                </td>
+                <td class="action-btns">
+                    {% if appt.status == 'PENDING' %}
+                    <form method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="appt_id" value="{{ appt.pk }}">
+                        <button name="action" value="confirm" class="btn btn-sm badge-green">Confirm</button>
+                        <button name="action" value="cancel" class="btn btn-sm badge-red">Cancel</button>
+                    </form>
+                    {% elif appt.status == 'CONFIRMED' %}
+                    <form method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="appt_id" value="{{ appt.pk }}">
+                        <button name="action" value="complete" class="btn btn-sm badge-grey">Complete</button>
+                        <button name="action" value="cancel" class="btn btn-sm badge-red">Cancel</button>
+                    </form>
+                    {% else %}
+                    <span class="muted">—</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" style="text-align:center;padding:30px;">No appointments found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
